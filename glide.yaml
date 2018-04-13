@@ -1,4 +1,4 @@
-package: github.com/btcsuite/btcd
+package: github.com/icloudland/btcdx
 import:
 - package: github.com/btcsuite/btclog
 - package: github.com/btcsuite/btcutil

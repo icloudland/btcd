@@ -11,8 +11,8 @@ import (
 	"encoding/binary"
 	"errors"
 
-	"github.com/btcsuite/btcd/blockchain"
-	"github.com/btcsuite/btcd/database"
+	"github.com/icloudland/btcdx/blockchain"
+	"github.com/icloudland/btcdx/database"
 	"github.com/btcsuite/btcutil"
 )
 

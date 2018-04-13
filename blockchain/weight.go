@@ -7,7 +7,7 @@ package blockchain
 import (
 	"fmt"
 
-	"github.com/btcsuite/btcd/txscript"
+	"github.com/icloudland/btcdx/txscript"
 	"github.com/btcsuite/btcutil"
 )
 

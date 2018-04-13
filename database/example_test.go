@@ -10,10 +10,10 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/btcsuite/btcd/chaincfg"
-	"github.com/btcsuite/btcd/database"
-	_ "github.com/btcsuite/btcd/database/ffldb"
-	"github.com/btcsuite/btcd/wire"
+	"github.com/icloudland/btcdx/chaincfg"
+	"github.com/icloudland/btcdx/database"
+	_ "github.com/icloudland/btcdx/database/ffldb"
+	"github.com/icloudland/btcdx/wire"
 	"github.com/btcsuite/btcutil"
 )
 
@@ -22,8 +22,8 @@ func ExampleCreate() {
 	// This example assumes the ffldb driver is imported.
 	//
 	// import (
-	// 	"github.com/btcsuite/btcd/database"
-	// 	_ "github.com/btcsuite/btcd/database/ffldb"
+	// 	"github.com/icloudland/btcdx/database"
+	// 	_ "github.com/icloudland/btcdx/database/ffldb"
 	// )
 
 	// Create a database and schedule it to be closed and removed on exit.
@@ -48,8 +48,8 @@ func Example_basicUsage() {
 	// This example assumes the ffldb driver is imported.
 	//
 	// import (
-	// 	"github.com/btcsuite/btcd/database"
-	// 	_ "github.com/btcsuite/btcd/database/ffldb"
+	// 	"github.com/icloudland/btcdx/database"
+	// 	_ "github.com/icloudland/btcdx/database/ffldb"
 	// )
 
 	// Create a database and schedule it to be closed and removed on exit.
@@ -114,8 +114,8 @@ func Example_blockStorageAndRetrieval() {
 	// This example assumes the ffldb driver is imported.
 	//
 	// import (
-	// 	"github.com/btcsuite/btcd/database"
-	// 	_ "github.com/btcsuite/btcd/database/ffldb"
+	// 	"github.com/icloudland/btcdx/database"
+	// 	_ "github.com/icloudland/btcdx/database/ffldb"
 	// )
 
 	// Create a database and schedule it to be closed and removed on exit.

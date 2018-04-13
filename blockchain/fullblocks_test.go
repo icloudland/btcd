@@ -12,14 +12,14 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/btcsuite/btcd/blockchain"
-	"github.com/btcsuite/btcd/blockchain/fullblocktests"
-	"github.com/btcsuite/btcd/chaincfg"
-	"github.com/btcsuite/btcd/chaincfg/chainhash"
-	"github.com/btcsuite/btcd/database"
-	_ "github.com/btcsuite/btcd/database/ffldb"
-	"github.com/btcsuite/btcd/txscript"
-	"github.com/btcsuite/btcd/wire"
+	"github.com/icloudland/btcdx/blockchain"
+	"github.com/icloudland/btcdx/blockchain/fullblocktests"
+	"github.com/icloudland/btcdx/chaincfg"
+	"github.com/icloudland/btcdx/chaincfg/chainhash"
+	"github.com/icloudland/btcdx/database"
+	_ "github.com/icloudland/btcdx/database/ffldb"
+	"github.com/icloudland/btcdx/txscript"
+	"github.com/icloudland/btcdx/wire"
 	"github.com/btcsuite/btcutil"
 )
 
