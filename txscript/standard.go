@@ -9,7 +9,7 @@ import (
 
 	"github.com/icloudland/btcdx/chaincfg"
 	"github.com/icloudland/btcdx/wire"
-	"github.com/btcsuite/btcutil"
+	"github.com/icloudland/btcutil"
 )
 
 const (

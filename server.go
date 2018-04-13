@@ -36,8 +36,8 @@ import (
 	"github.com/icloudland/btcdx/peer"
 	"github.com/icloudland/btcdx/txscript"
 	"github.com/icloudland/btcdx/wire"
-	"github.com/btcsuite/btcutil"
-	"github.com/btcsuite/btcutil/bloom"
+	"github.com/icloudland/btcutil"
+	"github.com/icloudland/btcutil/bloom"
 )
 
 const (

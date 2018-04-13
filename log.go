@@ -21,7 +21,7 @@ import (
 	"github.com/icloudland/btcdx/netsync"
 	"github.com/icloudland/btcdx/peer"
 	"github.com/icloudland/btcdx/txscript"
-	"github.com/btcsuite/btclog"
+	"github.com/icloudland/btclog"
 	"github.com/jrick/logrotate/rotator"
 )
 

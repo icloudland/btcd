@@ -17,8 +17,8 @@ import (
 	"github.com/icloudland/btcdx/rpcclient"
 	"github.com/icloudland/btcdx/txscript"
 	"github.com/icloudland/btcdx/wire"
-	"github.com/btcsuite/btcutil"
-	"github.com/btcsuite/btcutil/hdkeychain"
+	"github.com/icloudland/btcutil"
+	"github.com/icloudland/btcutil/hdkeychain"
 )
 
 var (

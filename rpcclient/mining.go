@@ -11,7 +11,7 @@ import (
 
 	"github.com/icloudland/btcdx/btcjson"
 	"github.com/icloudland/btcdx/chaincfg/chainhash"
-	"github.com/btcsuite/btcutil"
+	"github.com/icloudland/btcutil"
 )
 
 // FutureGenerateResult is a future promise to deliver the result of a

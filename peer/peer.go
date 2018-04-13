@@ -21,7 +21,7 @@ import (
 	"github.com/icloudland/btcdx/chaincfg"
 	"github.com/icloudland/btcdx/chaincfg/chainhash"
 	"github.com/icloudland/btcdx/wire"
-	"github.com/btcsuite/go-socks/socks"
+	"github.com/icloudland/go-socks/socks"
 	"github.com/davecgh/go-spew/spew"
 )
 

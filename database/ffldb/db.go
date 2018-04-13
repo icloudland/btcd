@@ -18,7 +18,7 @@ import (
 	"github.com/icloudland/btcdx/database"
 	"github.com/icloudland/btcdx/database/internal/treap"
 	"github.com/icloudland/btcdx/wire"
-	"github.com/btcsuite/btcutil"
+	"github.com/icloudland/btcutil"
 	"github.com/btcsuite/goleveldb/leveldb"
 	"github.com/btcsuite/goleveldb/leveldb/comparer"
 	ldberrors "github.com/btcsuite/goleveldb/leveldb/errors"

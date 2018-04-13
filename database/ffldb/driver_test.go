@@ -15,7 +15,7 @@ import (
 	"github.com/icloudland/btcdx/chaincfg"
 	"github.com/icloudland/btcdx/database"
 	"github.com/icloudland/btcdx/database/ffldb"
-	"github.com/btcsuite/btcutil"
+	"github.com/icloudland/btcutil"
 )
 
 // dbType is the database type name for this driver.

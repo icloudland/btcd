@@ -11,7 +11,7 @@ import (
 	"github.com/icloudland/btcdx/mempool"
 	"github.com/icloudland/btcdx/peer"
 	"github.com/icloudland/btcdx/wire"
-	"github.com/btcsuite/btcutil"
+	"github.com/icloudland/btcutil"
 )
 
 // PeerNotifier exposes methods to notify peers of status changes to

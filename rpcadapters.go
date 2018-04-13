@@ -13,7 +13,7 @@ import (
 	"github.com/icloudland/btcdx/netsync"
 	"github.com/icloudland/btcdx/peer"
 	"github.com/icloudland/btcdx/wire"
-	"github.com/btcsuite/btcutil"
+	"github.com/icloudland/btcutil"
 )
 
 // rpcPeer provides a peer for use with the RPC server and implements the

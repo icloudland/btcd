@@ -15,7 +15,7 @@ import (
 	"github.com/icloudland/btcdx/database"
 	"github.com/icloudland/btcdx/txscript"
 	"github.com/icloudland/btcdx/wire"
-	"github.com/btcsuite/btcutil"
+	"github.com/icloudland/btcutil"
 )
 
 const (

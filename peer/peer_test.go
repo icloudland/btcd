@@ -16,7 +16,7 @@ import (
 	"github.com/icloudland/btcdx/chaincfg/chainhash"
 	"github.com/icloudland/btcdx/peer"
 	"github.com/icloudland/btcdx/wire"
-	"github.com/btcsuite/go-socks/socks"
+	"github.com/icloudland/go-socks/socks"
 )
 
 // conn mocks a network connection by implementing the net.Conn interface.  It

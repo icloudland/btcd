@@ -29,8 +29,8 @@ import (
 	"github.com/icloudland/btcdx/database"
 	"github.com/icloudland/btcdx/txscript"
 	"github.com/icloudland/btcdx/wire"
-	"github.com/btcsuite/btcutil"
-	"github.com/btcsuite/websocket"
+	"github.com/icloudland/btcutil"
+	"github.com/icloudland/websocket"
 )
 
 const (

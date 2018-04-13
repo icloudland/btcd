@@ -11,7 +11,7 @@ import (
 
 	"github.com/icloudland/btcdx/chaincfg/chainhash"
 	"github.com/icloudland/btcdx/txscript"
-	"github.com/btcsuite/btcutil"
+	"github.com/icloudland/btcutil"
 )
 
 const (

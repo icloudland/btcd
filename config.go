@@ -27,8 +27,8 @@ import (
 	"github.com/icloudland/btcdx/database"
 	_ "github.com/icloudland/btcdx/database/ffldb"
 	"github.com/icloudland/btcdx/mempool"
-	"github.com/btcsuite/btcutil"
-	"github.com/btcsuite/go-socks/socks"
+	"github.com/icloudland/btcutil"
+	"github.com/icloudland/go-socks/socks"
 	flags "github.com/jessevdk/go-flags"
 )
 

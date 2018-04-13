@@ -18,7 +18,7 @@ import (
 	"github.com/icloudland/btcdx/mempool"
 	peerpkg "github.com/icloudland/btcdx/peer"
 	"github.com/icloudland/btcdx/wire"
-	"github.com/btcsuite/btcutil"
+	"github.com/icloudland/btcutil"
 )
 
 const (

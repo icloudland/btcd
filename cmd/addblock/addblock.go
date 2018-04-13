@@ -13,7 +13,7 @@ import (
 	"github.com/icloudland/btcdx/blockchain/indexers"
 	"github.com/icloudland/btcdx/database"
 	"github.com/icloudland/btcdx/limits"
-	"github.com/btcsuite/btclog"
+	"github.com/icloudland/btclog"
 )
 
 const (

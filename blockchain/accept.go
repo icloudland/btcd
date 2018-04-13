@@ -8,7 +8,7 @@ import (
 	"fmt"
 
 	"github.com/icloudland/btcdx/database"
-	"github.com/btcsuite/btcutil"
+	"github.com/icloudland/btcutil"
 )
 
 // maybeAcceptBlock potentially accepts a block into the block chain and, if

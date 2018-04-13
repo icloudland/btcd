@@ -1,11 +1,11 @@
 package: github.com/icloudland/btcdx
 import:
-- package: github.com/btcsuite/btclog
-- package: github.com/btcsuite/btcutil
+- package: github.com/icloudland/btclog
+- package: github.com/icloudland/btcutil
   subpackages:
   - bloom
   - hdkeychain
-- package: github.com/btcsuite/go-socks
+- package: github.com/icloudland/go-socks
   subpackages:
   - socks
 - package: golang.org/x/crypto
@@ -20,7 +20,7 @@ import:
   - leveldb/iterator
   - leveldb/opt
   - leveldb/util
-- package: github.com/btcsuite/websocket
+- package: github.com/icloudland/websocket
 - package: github.com/btcsuite/winsvc
   subpackages:
   - eventlog

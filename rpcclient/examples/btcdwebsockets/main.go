@@ -12,7 +12,7 @@ import (
 
 	"github.com/icloudland/btcdx/rpcclient"
 	"github.com/icloudland/btcdx/wire"
-	"github.com/btcsuite/btcutil"
+	"github.com/icloudland/btcutil"
 )
 
 func main() {

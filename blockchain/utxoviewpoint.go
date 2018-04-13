@@ -10,7 +10,7 @@ import (
 	"github.com/icloudland/btcdx/chaincfg/chainhash"
 	"github.com/icloudland/btcdx/database"
 	"github.com/icloudland/btcdx/txscript"
-	"github.com/btcsuite/btcutil"
+	"github.com/icloudland/btcutil"
 )
 
 // utxoOutput houses details about an individual unspent transaction output such

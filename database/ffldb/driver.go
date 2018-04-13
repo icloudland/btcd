@@ -9,7 +9,7 @@ import (
 
 	"github.com/icloudland/btcdx/database"
 	"github.com/icloudland/btcdx/wire"
-	"github.com/btcsuite/btclog"
+	"github.com/icloudland/btclog"
 )
 
 var log = btclog.Disabled
