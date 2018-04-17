@@ -811,6 +811,7 @@ func (c *Client) sendPost(jReq *jsonRequest) {
 	}
 	url := protocol + "://" + c.config.Host
 	bodyReader := bytes.NewReader(jReq.marshalledJSON)
+	fmt.Println(string(jReq.marshalledJSON[:]))
 	httpReq, err := http.NewRequest("POST", url, bodyReader)
 	if err != nil {
 		jReq.responseChan <- &response{result: nil, err: err}
