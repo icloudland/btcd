@@ -26,18 +26,7 @@ func (c *Client) OmniSend(fromAddress string, toAddress string,
 // Receive waits for the response promised by the future and returns a new
 // transaction hash
 func (r FutureOmniSendResult) Receive() (string, error) {
-	res, err := receiveFuture(r)
-	if err != nil {
-		return "", err
-	}
-
-	var txHashStr string
-	err = json.Unmarshal(res, &txHashStr)
-	if err != nil {
-		return "", err
-	}
-
-	return txHashStr, nil
+	return handleStringResult(r)
 
 }
 
@@ -116,4 +105,125 @@ func (c *Client) OmniGetTransactionAsync(txId string) FutureOmniGetTransactionRe
 func (c *Client) OmniGetTransaction(txId string) (*omnijson.OmniGetTransactionResult, error) {
 
 	return c.OmniGetTransactionAsync(txId).Receive()
+}
+
+// FutureOmniCreatePayloadSimpleSend is a future promise to deliver the result
+// of a OmniCreatePayloadSimpleSendAsync RPC invocation (or an applicable error).
+type FutureOmniCreatePayloadSimpleSend chan *response
+
+// Receive waits for the response promised by the future and returns a payload string
+func (r FutureOmniCreatePayloadSimpleSend) Receive() (string, error) {
+	return handleStringResult(r)
+
+}
+
+// OmniCreatePayloadSimpleSendAsync returns an instance of a type that can be used to
+// get the result of the RPC at some future time by invoking the Receive
+// function on the returned instance.
+//
+// See OmniGetTransaction for the blocking version and more details.
+func (c *Client) OmniCreatePayloadSimpleSendAsync(propertyId int, amount string) FutureOmniCreatePayloadSimpleSend {
+
+	cmd := omnijson.NewOmniCreatePayloadSimpleSendCmd(propertyId, amount)
+	return c.sendCmd(cmd)
+}
+
+// OmniCreatePayloadSimpleSend Create the payload for a simple send transaction
+func (c *Client) OmniCreatePayloadSimpleSend(propertyId int, amount string) (string, error) {
+
+	return c.OmniCreatePayloadSimpleSendAsync(propertyId, amount).Receive()
+}
+
+// FutureOmniCreatePayloadSimpleSend is a future promise to deliver the result
+// of a OmniCreatePayloadSimpleSendAsync RPC invocation (or an applicable error).
+type FutureOmniCreateRawTxOpReturn chan *response
+
+// Receive waits for the response promised by the future and returns a payload string
+func (r FutureOmniCreateRawTxOpReturn) Receive() (string, error) {
+	return handleStringResult(r)
+
+}
+
+// OmniCreatePayloadSimpleSendAsync returns an instance of a type that can be used to
+// get the result of the RPC at some future time by invoking the Receive
+// function on the returned instance.
+//
+// See OmniGetTransaction for the blocking version and more details.
+func (c *Client) OmniCreateRawTxOpReturnAsync(rawTx string, payload string) FutureOmniCreateRawTxOpReturn {
+
+	cmd := omnijson.NewOmniCreateRawTxOpReturn(rawTx, payload)
+	return c.sendCmd(cmd)
+}
+
+// OmniCreatePayloadSimpleSend Create the payload for a simple send transaction
+func (c *Client) OmniCreateRawTxOpReturn(rawTx string, payload string) (string, error) {
+
+	return c.OmniCreateRawTxOpReturnAsync(rawTx, payload).Receive()
+}
+
+// FuturOmniCreateRawTxReference is a future promise to deliver the result
+// of a OmniCreateRawTxReferenceAsync RPC invocation (or an applicable error).
+type FuturOmniCreateRawTxReference chan *response
+
+// Receive waits for the response promised by the future and returns a hash string
+func (r FuturOmniCreateRawTxReference) Receive() (string, error) {
+	return handleStringResult(r)
+
+}
+
+// OmniCreateRawTxReferenceAsync returns an instance of a type that can be used to
+// get the result of the RPC at some future time by invoking the Receive
+// function on the returned instance.
+//
+// Adds a reference output to the transaction.
+func (c *Client) OmniCreateRawTxReferenceAsync(rawTx string, destination string, amount *btcutil.Amount) FuturOmniCreateRawTxReference {
+
+	cmd := omnijson.NewOmniCreateRawTxReferenceCmd(rawTx, destination, amount)
+	return c.sendCmd(cmd)
+}
+
+// OmniCreateRawTxReference Adds a reference output to the transaction.
+func (c *Client) OmniCreateRawTxReference(rawTx string, destination string, amount *btcutil.Amount) (string, error) {
+	return c.OmniCreateRawTxReferenceAsync(rawTx, destination, amount).Receive()
+}
+
+// FuturOmniCreateRawTxReference is a future promise to deliver the result
+// of a OmniCreateRawTxReferenceAsync RPC invocation (or an applicable error).
+type FuturOmniCreateRawTxChange chan *response
+
+// Receive waits for the response promised by the future and returns a hash string
+func (r FuturOmniCreateRawTxChange) Receive() (string, error) {
+	return handleStringResult(r)
+}
+
+// OmniCreateRawTxReferenceAsync returns an instance of a type that can be used to
+// get the result of the RPC at some future time by invoking the Receive
+// function on the returned instance.
+//
+// Adds a reference output to the transaction.
+func (c *Client) OmniCreateRawTxChangeAsync(rawTx string, prevTxs []*omnijson.PreTx, destination string, fee float64) FuturOmniCreateRawTxChange {
+
+	cmd := omnijson.NewOmniCreateRawTxChangeCmd(rawTx, prevTxs, destination, fee)
+	return c.sendCmd(cmd)
+}
+
+// OmniCreateRawTxChange Adds a change output to the transaction
+func (c *Client) OmniCreateRawTxChange(rawTx string, prevTxs []*omnijson.PreTx, destination string, fee float64) (string, error) {
+	return c.OmniCreateRawTxChangeAsync(rawTx, prevTxs, destination, fee).Receive()
+}
+
+func handleStringResult(r chan *response) (string, error) {
+
+	res, err := receiveFuture(r)
+	if err != nil {
+		return "", err
+	}
+
+	var result string
+	err = json.Unmarshal(res, &result)
+	if err != nil {
+		return "", err
+	}
+
+	return result, nil
 }

@@ -2,9 +2,9 @@ package rpcclient
 
 import (
 	"encoding/json"
-	"github.com/btcsuite/btcd/chaincfg/chainhash"
-	"github.com/btcsuite/btcd/btcjson"
-	"github.com/btcsuite/btcutil"
+	"github.com/icloudland/btcdx/chaincfg/chainhash"
+	"github.com/icloudland/btcdx/btcjson"
+	"github.com/icloudland/btcutil"
 )
 
 func (c *Client) GetBlockVerboseAsyncT(blockHash *chainhash.Hash) FutureGetBlockVerboseResult {
