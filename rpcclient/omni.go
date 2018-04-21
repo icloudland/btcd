@@ -212,6 +212,48 @@ func (c *Client) OmniCreateRawTxChange(rawTx string, prevTxs []*omnijson.PreTx, 
 	return c.OmniCreateRawTxChangeAsync(rawTx, prevTxs, destination, fee).Receive()
 }
 
+// FuturOmniGetBalance is a future promise to deliver the result
+// of a OmniGetBalanceAsync RPC invocation (or an applicable error).
+type FuturOmniGetBalance chan *response
+
+// Receive waits for the response promised by the future and returns a hash string
+func (r FuturOmniGetBalance) Receive() (string, error) {
+
+	res, err := receiveFuture(r)
+	if err != nil {
+		return "", err
+	}
+
+	type getBalanceResult struct {
+		Balance  string
+		Reserved string
+	}
+
+	var result getBalanceResult
+	err = json.Unmarshal(res, &result)
+	if err != nil {
+		return "", err
+	}
+
+	return result.Balance, nil
+}
+
+// OmniGetBalanceAsync returns an instance of a type that can be used to
+// get the result of the RPC at some future time by invoking the Receive
+// function on the returned instance.
+//
+// Returns the token balance for a given address and property
+func (c *Client) OmniGetBalanceAsync(address string, propertyId int) FuturOmniGetBalance {
+
+	cmd := omnijson.NewOmniGetBalanceCmd(address, propertyId)
+	return c.sendCmd(cmd)
+}
+
+// OmniGetBalance Returns the token balance for a given address and property
+func (c *Client) OmniGetBalance(address string, propertyId int) (string, error) {
+	return c.OmniGetBalanceAsync(address, propertyId).Receive()
+}
+
 func handleStringResult(r chan *response) (string, error) {
 
 	res, err := receiveFuture(r)

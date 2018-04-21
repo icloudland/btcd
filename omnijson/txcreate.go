@@ -150,6 +150,23 @@ func NewOmniCreateRawTxChangeCmd(rawTx string, preTxs []*PreTx, destination stri
 	}
 }
 
+// OmniGetBalanceCmd defines the omni_getbalance JSON-RPC command.
+
+// Adds a reference output to the transaction
+type OmniGetBalanceCmd struct {
+	Address    string
+	PropertyId int
+}
+
+// NewOmniGetBalanceCmd returns a new instance which can be used to issue a
+// omni_getbalance JSON-RPC command.
+func NewOmniGetBalanceCmd(address string, propertyId int) *OmniGetBalanceCmd {
+	return &OmniGetBalanceCmd{
+		Address:    address,
+		PropertyId: propertyId,
+	}
+}
+
 func init() {
 	// No special flags for commands in this file.
 	flags := btcjson.UsageFlag(0)
@@ -163,5 +180,6 @@ func init() {
 	btcjson.MustRegisterCmd("omni_createrawtx_opreturn", (*OmniCreateRawTxOpReturnCmd)(nil), flags)
 	btcjson.MustRegisterCmd("omni_createrawtx_reference", (*OmniCreateRawTxReferenceCmd)(nil), flags)
 	btcjson.MustRegisterCmd("omni_createrawtx_change", (*OmniCreateRawTxChangeCmd)(nil), flags)
+	btcjson.MustRegisterCmd("omni_getbalance", (*OmniGetBalanceCmd)(nil), flags)
 
 }
