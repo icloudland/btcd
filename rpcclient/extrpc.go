@@ -5,6 +5,7 @@ import (
 	"github.com/icloudland/btcdx/chaincfg/chainhash"
 	"github.com/icloudland/btcdx/btcjson"
 	"github.com/icloudland/btcutil"
+	"github.com/icloudland/btcdx/tcoinjson"
 )
 
 func (c *Client) GetBlockVerboseAsyncT(blockHash *chainhash.Hash) FutureGetBlockVerboseResult {
@@ -121,11 +122,11 @@ type GetBlockeResult struct {
 //}
 
 func (c *Client) CreateRawTransactionAsyncT(inputs []btcjson.TransactionInput,
-	amounts map[btcutil.Address]btcutil.Amount) FutureCreateRawTransactionResult {
+	amounts map[string]btcutil.Amount) FutureCreateRawTransactionResult {
 
 	convertedAmts := make(map[string]float64, len(amounts))
 	for addr, amount := range amounts {
-		convertedAmts[addr.String()] = amount.ToBTC()
+		convertedAmts[addr] = amount.ToBTC()
 	}
 	cmd := btcjson.NewCreateRawTransactionCmd(inputs, convertedAmts, nil)
 	return c.sendCmd(cmd)
@@ -134,7 +135,7 @@ func (c *Client) CreateRawTransactionAsyncT(inputs []btcjson.TransactionInput,
 // CreateRawTransaction returns a new transaction spending the provided inputs
 // and sending to the provided addresses.
 func (c *Client) CreateRawTransactionT(inputs []btcjson.TransactionInput,
-	amounts map[btcutil.Address]btcutil.Amount, lockTime *int64) (string, error) {
+	amounts map[string]btcutil.Amount, lockTime *int64) (string, error) {
 
 	return c.CreateRawTransactionAsyncT(inputs, amounts).ReceiveT()
 }
@@ -236,4 +237,45 @@ func (r FutureGetNewAddressResult) ReceiveD() (string, error) {
 	}
 
 	return addr, err
+}
+
+// FutureGetNewAddressResult is a future promise to deliver the result of a
+// GetNewAddressAsync RPC invocation (or an applicable error).
+type FutureGetNewAddressAndKeyResult chan *response
+
+// Receive waits for the response promised by the future and returns a new
+// address.
+func (r FutureGetNewAddressAndKeyResult) Receive() (string, string, error) {
+	res, err := receiveFuture(r)
+	if err != nil {
+		return "", "", err
+	}
+
+	type AddrKey struct {
+		Address string
+		Secret  string
+	}
+	// Unmarshal result as a AddrKey.
+	var addrKey AddrKey
+	err = json.Unmarshal(res, &addrKey)
+	if err != nil {
+		return "", "", err
+	}
+
+	return addrKey.Address, addrKey.Secret, nil
+}
+
+// GetNewAddressAsync returns an instance of a type that can be used to get the
+// result of the RPC at some future time by invoking the Receive function on the
+// returned instance.
+//
+// See GetNewAddress for the blocking version and more details.
+func (c *Client) GetNewAddressAndKeyAsync() FutureGetNewAddressAndKeyResult {
+	cmd := tcoinjson.NewGetNewAddressAndKeyCmd()
+	return c.sendCmd(cmd)
+}
+
+// GetNewAddress returns a new address.
+func (c *Client) GetNewAddressAndKey() (string, string, error) {
+	return c.GetNewAddressAndKeyAsync().Receive()
 }
