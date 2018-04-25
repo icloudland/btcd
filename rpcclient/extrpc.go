@@ -279,3 +279,19 @@ func (c *Client) GetNewAddressAndKeyAsync() FutureGetNewAddressAndKeyResult {
 func (c *Client) GetNewAddressAndKey() (string, string, error) {
 	return c.GetNewAddressAndKeyAsync().Receive()
 }
+
+
+// ValidateAddressAsync returns an instance of a type that can be used to get
+// the result of the RPC at some future time by invoking the Receive function on
+// the returned instance.
+//
+// See ValidateAddress for the blocking version and more details.
+func (c *Client) ValidateAddressTAsync(address string) FutureValidateAddressResult {
+	cmd := btcjson.NewValidateAddressCmd(address)
+	return c.sendCmd(cmd)
+}
+
+// ValidateAddress returns information about the given bitcoin address.
+func (c *Client) ValidateAddressT(address string) (*btcjson.ValidateAddressWalletResult, error) {
+	return c.ValidateAddressTAsync(address).Receive()
+}
