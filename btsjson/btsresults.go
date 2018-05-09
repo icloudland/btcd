@@ -97,7 +97,15 @@ func (content *OperationContents) UnmarshalJSON(data []byte) error {
 
 type Transfer2Result struct {
 	TxHash      string
-	Operation interface{}
+	//Operation interface{}
+	Operation Transfer2Content
+}
+
+type Transfer2Content struct {
+	RefBlockNum    int64               `json:"ref_block_num"`
+	RefBlockPrefix int64               `json:"ref_block_prefix"`
+	Expiration     string              `json:"expiration"`
+	Operations     []OperationContents `json:"operations"`
 }
 
 func (p *Transfer2Result) UnmarshalJSON(data []byte) error {
