@@ -3,6 +3,7 @@ package rpcclient
 import (
 	"encoding/json"
 	"github.com/icloudland/btcdx/actjson"
+	"fmt"
 )
 
 // FutureBlockChainGetBlockCount is a future promise to deliver the result
@@ -187,7 +188,7 @@ func (r FutureBlockChainGetEvents) Receive() ([]actjson.BlockChainGetEvent, erro
 
 	// Unmarshal the result as an BlockChainGetTransactionResult.
 	var getEvents []actjson.BlockChainGetEvent
-	err = json.Unmarshal(res, getEvents)
+	err = json.Unmarshal(res, &getEvents)
 	if err != nil {
 		return nil, err
 	}
@@ -220,7 +221,7 @@ func (r FutureBlockChainListAddressBalances) Receive() ([]actjson.BlockChainList
 
 	// Unmarshal the result as an BlockChainGetTransactionResult.
 	var results []actjson.BlockChainListAddressBalanceResult
-	err = json.Unmarshal(res, results)
+	err = json.Unmarshal(res, &results)
 	if err != nil {
 		return nil, err
 	}
@@ -254,7 +255,7 @@ func (r FutureCallContract) Receive() (*actjson.CallContractResult, error) {
 
 	// Unmarshal the result as an CallContractResult.
 	var callResult actjson.CallContractResult
-	err = json.Unmarshal(res, callResult)
+	err = json.Unmarshal(res, &callResult)
 	if err != nil {
 		return nil, err
 	}
@@ -276,6 +277,43 @@ func (c *Client) CallContract(contract string, callerName string, functionName s
 	params string, assetSymbol string, callLimit float64) (*actjson.CallContractResult, error) {
 	return c.CallContractAsync(contract, callerName, functionName, params, assetSymbol, callLimit).Receive()
 }
+// FutureWalletTransferToAddress is a future promise to deliver the result
+// of a WalletTransferToAddressAsync RPC invocation (or an applicable error).
+type FutureWalletTransferToAddress chan *response
+
+func (r FutureWalletTransferToAddress) Receive() (error) {
+	res, err := receiveFuture(r)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(string(res))
+	// Unmarshal the result as an CallContractResult.
+	//var callResult actjson.CallContractResult
+	//err = json.Unmarshal(res, &callResult)
+	//if err != nil {
+	//	return nil, err
+	//}
+	//return &callResult, nil
+
+	return nil
+}
+
+// BlockChainGetBlockAsync returns an instance of a type that can be used to
+// get the result of the RPC at some future time by invoking the Receive
+// function on the returned instance.
+//
+func (c *Client) WalletTransferToAddressAsync(amount string, assetSymbol string, fromAccountName string,
+	toAddress string) FutureWalletTransferToAddress {
+	cmd := actjson.NewWalletTransferToAddressCmd(amount, assetSymbol, fromAccountName, toAddress)
+	return c.sendCmd(cmd)
+}
+
+// BlockChainGetBlock To specify the block by block number or ID, and obtain the header information of its block
+func (c *Client) WalletTransferToAddress(amount string, assetSymbol string, fromAccountName string,
+	toAddress string) ( error) {
+	return c.WalletTransferToAddressAsync(amount, assetSymbol, fromAccountName, toAddress).Receive()
+}
 
 // FutureBlockChainGetEvents is a future promise to deliver the result
 // of a BlockChainGetEventsAsync RPC invocation (or an applicable error).
@@ -289,7 +327,7 @@ func (r FutureBlockChainGetContractResult) Receive() (*actjson.BlockChainGetCont
 
 	// Unmarshal the result as an CallContractResult.
 	var callResult actjson.BlockChainGetContractResultResult
-	err = json.Unmarshal(res, callResult)
+	err = json.Unmarshal(res, &callResult)
 	if err != nil {
 		return nil, err
 	}
@@ -308,4 +346,55 @@ func (c *Client) BlockChainGetContractResultAsync(resultId string) FutureBlockCh
 // BlockChainGetContractResult
 func (c *Client) BlockChainGetContractResult(resultId string) (*actjson.BlockChainGetContractResultResult, error) {
 	return c.BlockChainGetContractResultAsync(resultId).Receive()
+}
+
+
+// FutureWalletLock is a future promise to deliver the result
+// of a WalletLockBtsAsync RPC invocation (or an applicable error).
+type FutureWalletLockAct chan *response
+
+// Receive waits for the response promised by the future and returns a hash string
+func (r FutureWalletLockAct) Receive() (error) {
+	_, err := receiveFuture(r)
+	return err
+}
+
+// WalletLockActAsync returns an instance of a type that can be used to
+// get the result of the RPC at some future time by invoking the Receive
+// function on the returned instance.
+//
+func (c *Client) WalletLockActAsync() FutureWalletLockAct {
+
+	cmd := actjson.NewWalletLockCmd()
+	return c.sendCmd(cmd)
+}
+
+// WalletLockAct lock wallet
+func (c *Client) WalletLockAct() (error) {
+	return c.WalletLockActAsync().Receive()
+}
+
+// FutureWalletUnLockAct is a future promise to deliver the result
+// of a WalletUnLockActAsync RPC invocation (or an applicable error).
+type FutureWalletUnLockAct chan *response
+
+// Receive waits for the response promised by the future and returns a hash string
+func (r FutureWalletUnLockAct) Receive() (error) {
+	_, err := receiveFuture(r)
+	return err
+}
+
+// WalletUnLockActAsync returns an instance of a type that can be used to
+// get the result of the RPC at some future time by invoking the Receive
+// function on the returned instance.
+//
+func (c *Client) WalletUnLockActAsync(timeout string, password string) FutureWalletUnLockAct {
+
+	cmd := actjson.NewWalletUnLockCmd(timeout, password)
+	return c.sendCmd(cmd)
+}
+
+// WalletUnLockAct lock act wallet for timeout, password
+func (c *Client) WalletUnLockAct(timeout string, password string) (error) {
+	return c.WalletUnLockActAsync(timeout, password).Receive()
 }

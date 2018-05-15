@@ -6,22 +6,10 @@ import (
 )
 
 type BlockChainGetBlockResult struct {
-	BlockNum            string   `json:"block_num"`
-	BlockSize           string   `json:"block_size"`
-	DelegateSignature   string   `json:"delegate_signature"`
-	ID                  string   `json:"id"`
-	Latency             string   `json:"latency"`
-	NextSecretHash      string   `json:"next_secret_hash"`
-	Previous            string   `json:"previous"`
-	PreviousSecret      string   `json:"previous_secret"`
-	ProcessingTime      string   `json:"processing_time"`
-	RandomSeed          string   `json:"random_seed"`
-	SigneeFeesCollected string   `json:"signee_fees_collected"`
-	SigneeFeesDestroyed string   `json:"signee_fees_destroyed"`
-	SigneeSharesIssued  string   `json:"signee_shares_issued"`
-	Timestamp           string   `json:"timestamp"`
-	TransactionDigest   string   `json:"transaction_digest"`
-	UserTransactionIds  []string `json:"user_transaction_ids"`
+	BlockNum           int32    `json:"block_num"`
+	BlockSize          int32    `json:"block_size"`
+	Timestamp          string   `json:"timestamp"`
+	UserTransactionIds []string `json:"user_transaction_ids"`
 }
 
 type BlockChainGetTransactionResult struct {
@@ -90,8 +78,8 @@ type LedgerEntry struct {
 }
 
 type AssetAmount struct {
-	AssetID string `json:"asset_id"`
-	Amount  int64  `json:"amount"`
+	AssetID int   `json:"asset_id"`
+	Amount  int64 `json:"amount"`
 }
 
 type BlockChainGetPrettyContractTransactionResult struct {
@@ -144,7 +132,7 @@ type BlockChainGetContractResultResult struct {
 }
 
 type AddressBalance struct {
-	Balance   string           `json:"balance"`
+	Balance   int64              `json:"balance"`
 	Condition BalanceCondition `json:"condition"`
 }
 
@@ -153,7 +141,7 @@ type BalanceCondition struct {
 }
 
 type BlockChainListAddressBalanceResult struct {
-	TxId    string
+	TxId   string
 	Detail AddressBalance
 }
 

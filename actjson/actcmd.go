@@ -33,6 +33,7 @@ func NewBlockChainGetTransactionCmd(txId string) *BlockChainGetTransactionCmd {
 		TxId: txId,
 	}
 }
+
 // BlockChainListAddressBalancesCmd defines the blockchain_list_address_balances JSON-RPC command.
 type BlockChainListAddressBalancesCmd struct {
 	Addr string
@@ -101,6 +102,26 @@ func NewCallContractCmd(contract string, callerName string, functionName string,
 	}
 }
 
+// WalletTransferToAddressCmd defines the wallet_transfer_to_address JSON-RPC command.
+type WalletTransferToAddressCmd struct {
+	Amount          string
+	AssetSymbol     string
+	FromAccountName string
+	ToAddress       string
+}
+
+func NewWalletTransferToAddressCmd(amount string, assetSymbol string, fromAccountName string,
+	toAddress string) *WalletTransferToAddressCmd {
+	return &WalletTransferToAddressCmd{
+		Amount:          amount,
+		AssetSymbol:     assetSymbol,
+		FromAccountName: fromAccountName,
+		ToAddress:       toAddress,
+	}
+}
+
+//
+
 // BlockChainGetContractResultCmd defines the blockchain_get_contract_result JSON-RPC command.
 type BlockChainGetContractResultCmd struct {
 	ResultId string
@@ -109,6 +130,26 @@ type BlockChainGetContractResultCmd struct {
 func NewBlockChainGetContractResultCmd(resultId string) *BlockChainGetContractResultCmd {
 	return &BlockChainGetContractResultCmd{
 		ResultId: resultId,
+	}
+}
+
+// WalletLockCmd defines the wallet_lock JSON-RPC command.
+type WalletLockCmd struct{}
+
+func NewWalletLockCmd() *WalletLockCmd {
+	return &WalletLockCmd{}
+}
+
+// WalletUnLockCmd defines the wallet_unlock JSON-RPC command.
+type WalletUnLockCmd struct {
+	Timeout  string
+	Password string
+}
+
+func NewWalletUnLockCmd(timeout string, password string) *WalletUnLockCmd {
+	return &WalletUnLockCmd{
+		Timeout:  timeout,
+		Password: password,
 	}
 }
 
@@ -126,5 +167,9 @@ func init() {
 	btcjson.MustRegisterCmd("blockchain_get_events", (*BlockChainGetEventsCmd)(nil), flags)
 	btcjson.MustRegisterCmd("call_contract", (*CallContractCmd)(nil), flags)
 	btcjson.MustRegisterCmd("blockchain_get_contract_result", (*BlockChainGetContractResultCmd)(nil), flags)
+	btcjson.MustRegisterCmd("wallet_transfer_to_address", (*WalletTransferToAddressCmd)(nil), flags)
+
+	btcjson.MustRegisterCmd("wallet_lock", (*WalletLockCmd)(nil), flags)
+	btcjson.MustRegisterCmd("wallet_unlock", (*WalletUnLockCmd)(nil), flags)
 
 }
