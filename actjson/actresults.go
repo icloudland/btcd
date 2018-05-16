@@ -132,7 +132,7 @@ type BlockChainGetContractResultResult struct {
 }
 
 type AddressBalance struct {
-	Balance   int64              `json:"balance"`
+	Balance   int64            `json:"balance"`
 	Condition BalanceCondition `json:"condition"`
 }
 
@@ -165,4 +165,22 @@ func (p *BlockChainListAddressBalanceResult) UnmarshalJSON(data []byte) error {
 	}
 
 	return nil
+}
+
+type WalletInfo struct {
+	AutomaticBackups           bool        `json:"automatic_backups"`
+	DataDir                    string      `json:"data_dir"`
+	LastScannedBlockNum        int         `json:"last_scanned_block_num"`
+	LastScannedBlockTimestamp  string      `json:"last_scanned_block_timestamp"`
+	Name                       string      `json:"name"`
+	NumScanningThreads         int         `json:"num_scanning_threads"`
+	Open                       bool        `json:"open"`
+	ScanProgress               string      `json:"scan_progress"`
+	TransactionExpirationSecs  int         `json:"transaction_expiration_secs"`
+	TransactionFee             AssetAmount `json:"transaction_fee"`
+	TransactionScanningEnabled bool        `json:"transaction_scanning_enabled"`
+	Unlocked                   bool        `json:"unlocked"`
+	UnlockedUntil              int         `json:"unlocked_until"`
+	UnlockedUntilTimestamp     string      `json:"unlocked_until_timestamp"`
+	Version                    int         `json:"version"`
 }

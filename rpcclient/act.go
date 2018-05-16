@@ -209,6 +209,7 @@ func (c *Client) BlockChainGetEventsAsync(blockNum int32, txId string) FutureBlo
 func (c *Client) BlockChainGetEvents(blockNum int32, txId string) ([]actjson.BlockChainGetEvent, error) {
 	return c.BlockChainGetEventsAsync(blockNum, txId).Receive()
 }
+
 // FutureBlockChainGetEvents is a future promise to deliver the result
 // of a BlockChainGetEventsAsync RPC invocation (or an applicable error).
 type FutureBlockChainListAddressBalances chan *response
@@ -277,6 +278,7 @@ func (c *Client) CallContract(contract string, callerName string, functionName s
 	params string, assetSymbol string, callLimit float64) (*actjson.CallContractResult, error) {
 	return c.CallContractAsync(contract, callerName, functionName, params, assetSymbol, callLimit).Receive()
 }
+
 // FutureWalletTransferToAddress is a future promise to deliver the result
 // of a WalletTransferToAddressAsync RPC invocation (or an applicable error).
 type FutureWalletTransferToAddress chan *response
@@ -311,7 +313,7 @@ func (c *Client) WalletTransferToAddressAsync(amount string, assetSymbol string,
 
 // BlockChainGetBlock To specify the block by block number or ID, and obtain the header information of its block
 func (c *Client) WalletTransferToAddress(amount string, assetSymbol string, fromAccountName string,
-	toAddress string) ( error) {
+	toAddress string) (error) {
 	return c.WalletTransferToAddressAsync(amount, assetSymbol, fromAccountName, toAddress).Receive()
 }
 
@@ -347,7 +349,6 @@ func (c *Client) BlockChainGetContractResultAsync(resultId string) FutureBlockCh
 func (c *Client) BlockChainGetContractResult(resultId string) (*actjson.BlockChainGetContractResultResult, error) {
 	return c.BlockChainGetContractResultAsync(resultId).Receive()
 }
-
 
 // FutureWalletLock is a future promise to deliver the result
 // of a WalletLockBtsAsync RPC invocation (or an applicable error).
@@ -397,4 +398,99 @@ func (c *Client) WalletUnLockActAsync(timeout string, password string) FutureWal
 // WalletUnLockAct lock act wallet for timeout, password
 func (c *Client) WalletUnLockAct(timeout string, password string) (error) {
 	return c.WalletUnLockActAsync(timeout, password).Receive()
+}
+
+// FutureWalletOpenAct is a future promise to deliver the result
+// of a WalletOpenActAsync RPC invocation (or an applicable error).
+type FutureWalletOpenAct chan *response
+
+// Receive waits for the response promised by the future and returns a hash string
+func (r FutureWalletOpenAct) Receive() (error) {
+	_, err := receiveFuture(r)
+	return err
+}
+
+// WalletOpenActAsync returns an instance of a type that can be used to
+// get the result of the RPC at some future time by invoking the Receive
+// function on the returned instance.
+//
+func (c *Client) WalletOpenActAsync(name string) FutureWalletOpenAct {
+
+	cmd := actjson.NewWalletOpenCmd(name)
+	return c.sendCmd(cmd)
+}
+
+// WalletOpenAct open act wallet for wallet name
+func (c *Client) WalletOpenAct(name string) (error) {
+	return c.WalletOpenActAsync(name).Receive()
+}
+
+// FutureWalletGetInfoAct is a future promise to deliver the result
+// of a WalletGetInfoActAsync RPC invocation (or an applicable error).
+type FutureWalletGetInfoAct chan *response
+
+// Receive waits for the response promised by the future and returns a hash string
+func (r FutureWalletGetInfoAct) Receive() (*actjson.WalletInfo, error) {
+	res, err := receiveFuture(r)
+	if err != nil {
+		return nil, err
+	}
+
+	// Unmarshal the result as an CallContractResult.
+	var info actjson.WalletInfo
+	err = json.Unmarshal(res, &info)
+	if err != nil {
+		return nil, err
+	}
+	return &info, nil
+}
+
+// WalletOpenActAsync returns an instance of a type that can be used to
+// get the result of the RPC at some future time by invoking the Receive
+// function on the returned instance.
+//
+func (c *Client) WalletGetInfoActAsync() FutureWalletGetInfoAct {
+
+	cmd := actjson.NewWalletGetInfoCmd()
+	return c.sendCmd(cmd)
+}
+
+// WalletGetInfoAct open act wallet for wallet name
+func (c *Client) WalletGetInfoAct() (*actjson.WalletInfo, error) {
+	return c.WalletGetInfoActAsync().Receive()
+}
+
+// FutureWalletCheckAddressCmd is a future promise to deliver the result
+// of a WalletCheckAddressAsync RPC invocation (or an applicable error).
+type FutureWalletCheckAddressCmd chan *response
+
+// Receive waits for the response promised by the future and returns a hash string
+func (r FutureWalletCheckAddressCmd) Receive() (bool, error) {
+	res, err := receiveFuture(r)
+	if err != nil {
+		return false, err
+	}
+
+	// Unmarshal the result as an CallContractResult.
+	var b bool
+	err = json.Unmarshal(res, &b)
+	if err != nil {
+		return false, err
+	}
+	return b, nil
+}
+
+// WalletCheckAddressAsync returns an instance of a type that can be used to
+// get the result of the RPC at some future time by invoking the Receive
+// function on the returned instance.
+//
+func (c *Client) WalletCheckAddressAsync(addr string) FutureWalletCheckAddressCmd {
+
+	cmd := actjson.NewWalletCheckAddressCmd(addr)
+	return c.sendCmd(cmd)
+}
+
+// WalletCheckAddress, determine if an address is legal
+func (c *Client) WalletCheckAddress(addr string) (bool, error) {
+	return c.WalletCheckAddressAsync(addr).Receive()
 }

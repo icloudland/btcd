@@ -153,6 +153,36 @@ func NewWalletUnLockCmd(timeout string, password string) *WalletUnLockCmd {
 	}
 }
 
+// WalletOpenCmd defines the wallet_open JSON-RPC command.
+type WalletOpenCmd struct {
+	WalletName string
+}
+
+func NewWalletOpenCmd(walletName string) *WalletOpenCmd {
+	return &WalletOpenCmd{
+		WalletName: walletName,
+	}
+}
+
+// WalletGetInfoCmd defines the Get wallet information command
+type WalletGetInfoCmd struct {
+}
+
+func NewWalletGetInfoCmd() *WalletGetInfoCmd {
+	return &WalletGetInfoCmd{}
+}
+
+// WalletCheckAddressCmd defines the Get wallet information command
+type WalletCheckAddressCmd struct {
+	Address string
+}
+
+func NewWalletCheckAddressCmd(addr string) *WalletCheckAddressCmd {
+	return &WalletCheckAddressCmd{
+		Address: addr,
+	}
+}
+
 func init() {
 	// No special flags for commands in this file.
 	flags := btcjson.UsageFlag(0)
@@ -171,5 +201,8 @@ func init() {
 
 	btcjson.MustRegisterCmd("wallet_lock", (*WalletLockCmd)(nil), flags)
 	btcjson.MustRegisterCmd("wallet_unlock", (*WalletUnLockCmd)(nil), flags)
+	btcjson.MustRegisterCmd("wallet_open", (*WalletOpenCmd)(nil), flags)
+	btcjson.MustRegisterCmd("wallet_get_info", (*WalletGetInfoCmd)(nil), flags)
+	btcjson.MustRegisterCmd("wallet_check_address", (*WalletCheckAddressCmd)(nil), flags)
 
 }
