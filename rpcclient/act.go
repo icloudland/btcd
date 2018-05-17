@@ -3,7 +3,6 @@ package rpcclient
 import (
 	"encoding/json"
 	"github.com/icloudland/btcdx/actjson"
-	"fmt"
 )
 
 // FutureBlockChainGetBlockCount is a future promise to deliver the result
@@ -283,22 +282,19 @@ func (c *Client) CallContract(contract string, callerName string, functionName s
 // of a WalletTransferToAddressAsync RPC invocation (or an applicable error).
 type FutureWalletTransferToAddress chan *response
 
-func (r FutureWalletTransferToAddress) Receive() (error) {
+func (r FutureWalletTransferToAddress) Receive() (*actjson.WalletTransferToAddressResult, error) {
 	res, err := receiveFuture(r)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	fmt.Println(string(res))
 	// Unmarshal the result as an CallContractResult.
-	//var callResult actjson.CallContractResult
-	//err = json.Unmarshal(res, &callResult)
-	//if err != nil {
-	//	return nil, err
-	//}
-	//return &callResult, nil
-
-	return nil
+	var transferResult actjson.WalletTransferToAddressResult
+	err = json.Unmarshal(res, &transferResult)
+	if err != nil {
+		return nil, err
+	}
+	return &transferResult, nil
 }
 
 // BlockChainGetBlockAsync returns an instance of a type that can be used to
@@ -313,7 +309,7 @@ func (c *Client) WalletTransferToAddressAsync(amount string, assetSymbol string,
 
 // BlockChainGetBlock To specify the block by block number or ID, and obtain the header information of its block
 func (c *Client) WalletTransferToAddress(amount string, assetSymbol string, fromAccountName string,
-	toAddress string) (error) {
+	toAddress string) (*actjson.WalletTransferToAddressResult, error) {
 	return c.WalletTransferToAddressAsync(amount, assetSymbol, fromAccountName, toAddress).Receive()
 }
 

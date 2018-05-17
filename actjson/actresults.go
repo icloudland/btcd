@@ -125,6 +125,9 @@ type CallContractResult struct {
 	LedgerEntries []interface{} `json:"ledger_entries"`
 	ReceivedTime  string        `json:"received_time"`
 }
+type WalletTransferToAddressResult struct {
+	EntryID       string        `json:"entry_id"`
+}
 
 type BlockChainGetContractResultResult struct {
 	BlockNum int    `json:"block_num"`
