@@ -3,6 +3,8 @@ package actjson
 import (
 	"encoding/json"
 	"github.com/juju/errors"
+	"reflect"
+	"strconv"
 )
 
 type BlockChainGetBlockResult struct {
@@ -78,8 +80,34 @@ type LedgerEntry struct {
 }
 
 type AssetAmount struct {
-	AssetID int   `json:"asset_id"`
-	Amount  int64 `json:"amount"`
+	AssetID int       `json:"asset_id"`
+	Amount  ActAmount `json:"amount"`
+}
+
+type ActAmount struct {
+	Value int64
+}
+
+func (p *ActAmount) UnmarshalJSON(data []byte) error {
+
+	var v interface{}
+
+	if err := json.Unmarshal(data, &v); err != nil {
+		return errors.Annotate(err, "Unmarshal")
+	}
+	t := reflect.TypeOf(v)
+	if t.Kind() == reflect.String {
+		str := v.(string)
+		v64, err := strconv.ParseInt(str, 10, 64)
+		if err != nil {
+			return err
+		}
+		p.Value = v64
+	} else if t.Kind() == reflect.Float64 {
+		bb := v.(float64)
+		p.Value = int64(bb)
+	}
+	return nil
 }
 
 type BlockChainGetPrettyContractTransactionResult struct {
@@ -126,7 +154,7 @@ type CallContractResult struct {
 	ReceivedTime  string        `json:"received_time"`
 }
 type WalletTransferToAddressResult struct {
-	EntryID       string        `json:"entry_id"`
+	EntryID string `json:"entry_id"`
 }
 
 type BlockChainGetContractResultResult struct {
