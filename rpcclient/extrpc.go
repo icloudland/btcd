@@ -295,3 +295,61 @@ func (c *Client) ValidateAddressTAsync(address string) FutureValidateAddressResu
 func (c *Client) ValidateAddressT(address string) (*btcjson.ValidateAddressWalletResult, error) {
 	return c.ValidateAddressTAsync(address).Receive()
 }
+
+func (r FutureGetNewAddressResult) ReceiveT() (string, error) {
+	res, err := receiveFuture(r)
+	if err != nil {
+		return "", err
+	}
+
+	// Unmarshal result as a string.
+	var addr string
+	err = json.Unmarshal(res, &addr)
+	if err != nil {
+		return "", err
+	}
+
+	return addr, nil
+}
+
+
+// GetNewAddress returns a new address.
+func (c *Client) GetNewAddressT(account string) (string, error) {
+	return c.GetNewAddressAsync(account).ReceiveT()
+}
+
+
+func (r FutureDumpPrivKeyResult) ReceiveT() (string, error) {
+	res, err := receiveFuture(r)
+	if err != nil {
+		return "", err
+	}
+
+	// Unmarshal result as a string.
+	var privKeyWIF string
+	err = json.Unmarshal(res, &privKeyWIF)
+	if err != nil {
+		return "", err
+	}
+
+	return privKeyWIF, nil
+}
+
+// DumpPrivKeyAsync returns an instance of a type that can be used to get the
+// result of the RPC at some future time by invoking the Receive function on the
+// returned instance.
+//
+// See DumpPrivKey for the blocking version and more details.
+func (c *Client) DumpPrivKeyTAsync(address string) FutureDumpPrivKeyResult {
+	cmd := btcjson.NewDumpPrivKeyCmd(address)
+	return c.sendCmd(cmd)
+}
+
+// DumpPrivKey gets the private key corresponding to the passed address encoded
+// in the wallet import format (WIF).
+//
+// NOTE: This function requires to the wallet to be unlocked.  See the
+// WalletPassphrase function for more details.
+func (c *Client) DumpPrivKeyT(address string) (string, error) {
+	return c.DumpPrivKeyTAsync(address).ReceiveT()
+}
