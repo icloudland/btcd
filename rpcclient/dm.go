@@ -399,19 +399,14 @@ func (c *DmClient) DmGetNewAddress(psw string) (*dmjson.DmGetNewAddressResult, e
 
 type FutureDmGetBalance chan *dmResponse
 
-func (r FutureDmGetBalance) Receive(coinName string) (int64, error) {
+func (r FutureDmGetBalance) Receive(coinName string) (string, error) {
 	res, err := receiveDmFuture(r)
 	if err != nil {
-		return 0, err
+		return "", err
 	}
 	rawJson := string(res[:])
 	balStr := gjson.Get(rawJson, coinName).String()
-	balFloat, err :=strconv.ParseFloat(balStr, 64)
-
-	if err != nil {
-		return 0, err
-	}
-	return int64(balFloat * 1e10), nil
+	return balStr, nil
 }
 
 func (c *DmClient) DmGetBalanceAsync(address string,
@@ -422,6 +417,6 @@ func (c *DmClient) DmGetBalanceAsync(address string,
 }
 
 func (c *DmClient) DmGetBalance(address string, coinName string) (
-	int64, error) {
+	string, error) {
 	return c.DmGetBalanceAsync(address, coinName).Receive(coinName)
 }
