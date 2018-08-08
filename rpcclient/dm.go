@@ -420,3 +420,30 @@ func (c *DmClient) DmGetBalance(address string, coinName string) (
 	string, error) {
 	return c.DmGetBalanceAsync(address, coinName).Receive(coinName)
 }
+
+type FutureDmGetTokenInfo chan *dmResponse
+
+func (r FutureDmGetTokenInfo) Receive() (*dmjson.DmTokenInfo, error) {
+	res, err := receiveDmFuture(r)
+	if err != nil {
+		return nil, err
+	}
+
+	var tokenInfo dmjson.DmTokenInfo
+	err = json.Unmarshal(res, &tokenInfo)
+	if err != nil {
+		return nil, err
+	}
+
+	return &tokenInfo, nil
+}
+
+func (c *DmClient) DmGetTokenInfoAsync(cc string) FutureDmGetTokenInfo {
+
+	cmd := dmjson.NewDmGetTokenInfoCmd(cc)
+	return c.sendDmGetCmd(cmd)
+}
+
+func (c *DmClient) DmGetTokenInfo(cc string) (*dmjson.DmTokenInfo, error) {
+	return c.DmGetTokenInfoAsync(cc).Receive()
+}

@@ -51,3 +51,21 @@ type DmCryptoInfo struct {
 	Cipher     string `json:"cipher"`
 	CipherText string `json:"ciphertext"`
 }
+
+type DmTokenInfo struct {
+	Name        string `json:"name"`
+	Cc          string `json:"cc"`
+	Creator     string `json:"creator"`
+	Desc        string `json:"desc"`
+	Total       string `json:"total"`
+	URL         string `json:"url"`
+	Decimal     string `json:"decimal"`
+	Logo        string `json:"logo"`
+	Mineral     string `json:"mineral"`
+	Award       string `json:"award"`
+	Email       string `json:"email"`
+	TokenCharge string `json:"tokenCharge"`
+	Charge      string `json:"charge"`
+	PublishTime string `json:"publishTime"`
+	Deflation   string `json:"deflation"`
+}
