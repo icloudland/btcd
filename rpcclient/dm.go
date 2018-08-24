@@ -14,6 +14,7 @@ import (
 	"strconv"
 	"github.com/tidwall/gjson"
 	"errors"
+	"net/http/httputil"
 )
 
 type DmClient struct {
@@ -24,6 +25,8 @@ type DmClient struct {
 	sendPostChan chan *sendDmHttpDetails
 	shutdown     chan struct{}
 	wg           sync.WaitGroup
+
+	Debug bool
 }
 
 func NewDmClient(config *ConnConfig) (*DmClient, error) {
@@ -185,7 +188,8 @@ func (c *DmClient) sendDmGetCmd(cmd interface{}) chan *dmResponse {
 }
 
 func (c *DmClient) sendDmRequest(jReq *jsonDmRequest) {
-	c.sendDmGet(jReq)
+	//c.sendDmGet(jReq)
+	c.call(jReq)
 }
 
 func (c *DmClient) sendDmGet(jReq *jsonDmRequest) {
@@ -211,6 +215,67 @@ func (c *DmClient) sendDmGet(jReq *jsonDmRequest) {
 	}
 
 	c.sendDmHttpRequest(httpReq, jReq)
+}
+
+func (c *DmClient) call(jReq *jsonDmRequest) {
+
+	protocol := "http"
+	if !c.config.DisableTLS {
+		protocol = "https"
+	}
+	url := protocol + "://" + c.config.Host + "/" + jReq.method
+
+	req, err := http.NewRequest(jReq.requestType, url, nil)
+	if err != nil {
+		jReq.responseChan <- &dmResponse{status: "0", err: err}
+		return
+	}
+
+	if c.Debug {
+		// Useful when debugging API calls
+		requestDump, err := httputil.DumpRequest(req, true)
+		if err != nil {
+			fmt.Println(err)
+		}
+		fmt.Println("-------------------------------")
+		fmt.Println(string(requestDump))
+	}
+
+	httpResponse, err := c.httpClient.Do(req)
+	if err != nil {
+		jReq.responseChan <- &dmResponse{err: err}
+		return
+	}
+
+	// Read the raw bytes and close the response.
+	respBytes, err := ioutil.ReadAll(httpResponse.Body)
+	httpResponse.Body.Close()
+	if err != nil {
+		err = fmt.Errorf("error reading json reply: %v", err)
+		jReq.responseChan <- &dmResponse{err: err}
+		return
+	}
+
+	if c.Debug {
+		fmt.Println("RESPONSE:")
+		fmt.Println(string(respBytes[:]))
+	}
+
+	// Try to unmarshal the response as a regular JSON-RPC response.
+	var resp dmHttpResponse
+	err = json.Unmarshal(respBytes, &resp)
+	if err != nil {
+		// When the response itself isn't a valid JSON-RPC response
+		// return an error which includes the HTTP status code and raw
+		// response bytes.
+		err = fmt.Errorf("status code: %d, response: %q",
+			httpResponse.StatusCode, string(respBytes))
+		jReq.responseChan <- &dmResponse{err: err}
+		return
+	}
+
+	jReq.responseChan <- &dmResponse{data: resp.Data, info: resp.Info, status: resp.Status,}
+
 }
 
 func (c *DmClient) sendDmHttpRequest(httpReq *http.Request, jReq *jsonDmRequest) {
