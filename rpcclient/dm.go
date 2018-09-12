@@ -328,6 +328,31 @@ func (c *DmClient) DmGetBlockCount() (int64, error) {
 	return c.DmGetBlockCountAsync().Receive()
 }
 
+type FutureDmGetBlockHeight chan *dmResponse
+
+func (r FutureDmGetBlockHeight) Receive() (int64, error) {
+	res, err := receiveDmFuture(r)
+	if err != nil {
+		return 0, err
+	}
+
+	rawJson := string(res[:])
+	height := gjson.Get(rawJson, "Height").String()
+
+	return strconv.ParseInt(height, 10, 64)
+
+}
+
+func (c *DmClient) DmGetBlockHeightAsync() FutureDmGetBlockHeight {
+
+	cmd := dmjson.NewDmGetBlockHeightCmd()
+	return c.sendDmGetCmd(cmd)
+}
+
+func (c *DmClient) DmGetBlockHeight() (int64, error) {
+	return c.DmGetBlockHeightAsync().Receive()
+}
+
 type FutureDmGetTransactionsByBlockId chan *dmResponse
 
 func (r FutureDmGetTransactionsByBlockId) Receive() ([]dmjson.DmBlockTransaction, error) {
@@ -370,15 +395,15 @@ func (r FutureDmCreateTransaction) Receive() (error) {
 }
 
 func (c *DmClient) DmCreateTransactionAsync(cc string, from string, to string,
-	amo string, remark string, txid string, nonce string, sign string) FutureDmCreateTransaction {
+	amo string, remark string, txid string, nonce string, sign string, fee string) FutureDmCreateTransaction {
 
-	cmd := dmjson.NewDmCreateTransactionCmd(cc, from, to, amo, remark, txid, nonce, sign)
+	cmd := dmjson.NewDmCreateTransactionCmd(cc, from, to, amo, remark, txid, nonce, sign, fee)
 	return c.sendDmGetCmd(cmd)
 }
 
 func (c *DmClient) DmCreateTransaction(cc string, from string, to string,
-	amo string, remark string, txid string, nonce string, sign string) (error) {
-	return c.DmCreateTransactionAsync(cc, from, to, amo, remark, txid, nonce, sign).Receive()
+	amo string, remark string, txid string, nonce string, sign string, fee string) (error) {
+	return c.DmCreateTransactionAsync(cc, from, to, amo, remark, txid, nonce, sign, fee).Receive()
 }
 
 type FutureDmGetTransactionId chan *dmResponse

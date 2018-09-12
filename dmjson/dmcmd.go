@@ -24,6 +24,18 @@ func NewDmGetBlockCountCmd() *DmGetBlockCountCmd {
 	}
 }
 
+type DmGetBlockHeightCmd struct {
+	Cmd string
+	Cc  string
+}
+
+func NewDmGetBlockHeightCmd() *DmGetBlockHeightCmd {
+	return &DmGetBlockHeightCmd{
+		Cmd: "qrychl",
+		Cc:  "mcc",
+	}
+}
+
 type DmGetTransactionsByBlockIdCmd struct {
 	Method string
 	Blk    int64
@@ -81,10 +93,11 @@ type DmCreateTransactionCmd struct {
 	Txid   string
 	Nonce  string
 	Sign   string
+	Fee    string
 }
 
 func NewDmCreateTransactionCmd(cc string, from string, to string,
-	amo string, remark string, txid string, nonce string, sign string) *DmCreateTransactionCmd {
+	amo string, remark string, txid string, nonce string, sign string, fee string) *DmCreateTransactionCmd {
 	return &DmCreateTransactionCmd{
 		Cc:     cc,
 		From:   from,
@@ -94,6 +107,7 @@ func NewDmCreateTransactionCmd(cc string, from string, to string,
 		Txid:   txid,
 		Nonce:  nonce,
 		Sign:   sign,
+		Fee:    fee,
 	}
 }
 
@@ -117,8 +131,8 @@ func init() {
 	btcjson.MustRegisterCmd("dm:trade:2", (*DmGetTransactionDetailCmd)(nil), flags)
 	btcjson.MustRegisterCmd("dm:crtTx:1", (*DmGetTransactionIdCmd)(nil), flags)
 	btcjson.MustRegisterCmd("dm:qry:1", (*DmGetBalanceCmd)(nil), flags)
+	btcjson.MustRegisterCmd("dm:qry:2", (*DmGetBlockHeightCmd)(nil), flags)
 	btcjson.MustRegisterCmd("dm:ivk:1", (*DmCreateTransactionCmd)(nil), flags)
 	btcjson.MustRegisterCmd("dm:tkinfo:1", (*DmGetTokenInfoCmd)(nil), flags)
-
 
 }
