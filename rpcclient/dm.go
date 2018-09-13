@@ -15,6 +15,11 @@ import (
 	"github.com/tidwall/gjson"
 	"errors"
 	"net/http/httputil"
+	"net/url"
+	"crypto/tls"
+	"crypto/x509"
+	"time"
+	"net"
 )
 
 type DmClient struct {
@@ -36,7 +41,7 @@ func NewDmClient(config *ConnConfig) (*DmClient, error) {
 		start = true
 
 		var err error
-		httpClient, err = newHTTPClient(config)
+		httpClient, err = newDmHTTPClient(config)
 		if err != nil {
 			return nil, err
 		}
@@ -54,6 +59,45 @@ func NewDmClient(config *ConnConfig) (*DmClient, error) {
 	}
 
 	return client, nil
+}
+
+func newDmHTTPClient(config *ConnConfig) (*http.Client, error) {
+	// Set proxy function if there is a proxy configured.
+	var proxyFunc func(*http.Request) (*url.URL, error)
+	if config.Proxy != "" {
+		proxyURL, err := url.Parse(config.Proxy)
+		if err != nil {
+			return nil, err
+		}
+		proxyFunc = http.ProxyURL(proxyURL)
+	}
+
+	// Configure TLS if needed.
+	var tlsConfig *tls.Config
+	if !config.DisableTLS {
+		if len(config.Certificates) > 0 {
+			pool := x509.NewCertPool()
+			pool.AppendCertsFromPEM(config.Certificates)
+			tlsConfig = &tls.Config{
+				RootCAs: pool,
+			}
+		}
+	}
+
+	client := http.Client{
+		Transport: &http.Transport{
+			Proxy:           proxyFunc,
+			TLSClientConfig: tlsConfig,
+			DialContext: (&net.Dialer{
+				Timeout:   30 * time.Second,
+				KeepAlive: 30 * time.Second,
+				DualStack: true,
+			}).DialContext,
+			TLSHandshakeTimeout: 10 * time.Second,
+		},
+	}
+
+	return &client, nil
 }
 
 // start begins processing input and output messages.
