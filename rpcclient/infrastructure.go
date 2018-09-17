@@ -1143,6 +1143,12 @@ func newHTTPClient(config *ConnConfig) (*http.Client, error) {
 		Transport: &http.Transport{
 			Proxy:           proxyFunc,
 			TLSClientConfig: tlsConfig,
+			DialContext: (&net.Dialer{
+				Timeout:   30 * time.Second,
+				KeepAlive: 30 * time.Second,
+				DualStack: true,
+			}).DialContext,
+			TLSHandshakeTimeout: 10 * time.Second,
 		},
 	}
 
