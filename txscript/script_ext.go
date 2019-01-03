@@ -3,6 +3,7 @@ package txscript
 import (
 	"bytes"
 	"fmt"
+	"strings"
 )
 
 func DisasmStringHex(buf []byte) (string, error) {
@@ -35,5 +36,27 @@ func (pop *parsedOpcode) print1() string {
 	}
 
 	return fmt.Sprintf("%x", pop.data)
+
+}
+
+func DisasmStringHexGen(asm string) string  {
+	asms := strings.Split(asm, " ")
+	var disbuf bytes.Buffer
+	for _, item := range asms {
+		isFind := false
+		for _, c := range opcodeArray {
+			if c.name == item {
+				disbuf.WriteString(fmt.Sprintf("%x", c.value))
+				isFind = true
+				break
+			}
+		}
+
+		if !isFind {
+			disbuf.WriteString(item)
+		}
+	}
+
+	return disbuf.String()
 
 }
