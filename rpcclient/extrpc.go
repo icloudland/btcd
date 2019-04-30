@@ -280,7 +280,6 @@ func (c *Client) GetNewAddressAndKey() (string, string, error) {
 	return c.GetNewAddressAndKeyAsync().Receive()
 }
 
-
 // ValidateAddressAsync returns an instance of a type that can be used to get
 // the result of the RPC at some future time by invoking the Receive function on
 // the returned instance.
@@ -312,12 +311,10 @@ func (r FutureGetNewAddressResult) ReceiveT() (string, error) {
 	return addr, nil
 }
 
-
 // GetNewAddress returns a new address.
 func (c *Client) GetNewAddressT(account string) (string, error) {
 	return c.GetNewAddressAsync(account).ReceiveT()
 }
-
 
 func (r FutureDumpPrivKeyResult) ReceiveT() (string, error) {
 	res, err := receiveFuture(r)
@@ -352,4 +349,98 @@ func (c *Client) DumpPrivKeyTAsync(address string) FutureDumpPrivKeyResult {
 // WalletPassphrase function for more details.
 func (c *Client) DumpPrivKeyT(address string) (string, error) {
 	return c.DumpPrivKeyTAsync(address).ReceiveT()
+}
+
+// Receive waits for the response promised by the future and returns the list of
+// addresses associated with the passed account.
+func (r FutureGetAddressesByAccountResult) ReceiveT() ([]string, error) {
+	res, err := receiveFuture(r)
+	if err != nil {
+		return nil, err
+	}
+
+	// Unmashal result as an array of string.
+	var addrStrings []string
+	err = json.Unmarshal(res, &addrStrings)
+	if err != nil {
+		return nil, err
+	}
+
+	return addrStrings, nil
+}
+
+// GetAddressesByAccountAsync returns an instance of a type that can be used to
+// get the result of the RPC at some future time by invoking the Receive
+// function on the returned instance.
+//
+// See GetAddressesByAccount for the blocking version and more details.
+func (c *Client) GetAddressesByAccountTAsync(account string) FutureGetAddressesByAccountResult {
+	cmd := btcjson.NewGetAddressesByAccountCmd(account)
+	return c.sendCmd(cmd)
+}
+
+// GetAddressesByAccount returns the list of addresses associated with the
+// passed account.
+func (c *Client) GetAddressesByAccountT(account string) ([]string, error) {
+	return c.GetAddressesByAccountTAsync(account).ReceiveT()
+}
+
+func (c *Client) ListUnspentMinMaxAddressesT(minConf, maxConf int, addrs []string) ([]btcjson.ListUnspentResult, error) {
+	return c.ListUnspentMinMaxAddressesTAsync(minConf, maxConf, addrs).Receive()
+}
+
+func (c *Client) ListUnspentMinMaxAddressesTAsync(minConf, maxConf int, addrs []string) FutureListUnspentResult {
+	cmd := btcjson.NewListUnspentCmd(&minConf, &maxConf, &addrs)
+	return c.sendCmd(cmd)
+}
+
+// RawTxInput models the data needed for raw transaction input that is used in
+// the SignRawTransactionCmd struct.
+type RawTxInput struct {
+	Txid         string  `json:"txid"`
+	Vout         uint32  `json:"vout"`
+	ScriptPubKey string  `json:"scriptPubKey"`
+	RedeemScript string  `json:"redeemScript"`
+	Amount       float64 `json:"amount"`
+}
+
+// SignRawTransactionCmd defines the signrawtransaction JSON-RPC command.
+type SignRawTransactionCmd struct {
+	RawTx    string
+	Inputs   *[]RawTxInput
+	PrivKeys *[]string
+	Flags    *string `jsonrpcdefault:"\"ALL\""`
+}
+
+func NewSignRawTransactionCmd(hexEncodedTx string, inputs *[]RawTxInput, privKeys *[]string, flags *string) *SignRawTransactionCmd {
+	return &SignRawTransactionCmd{
+		RawTx:    hexEncodedTx,
+		Inputs:   inputs,
+		PrivKeys: privKeys,
+		Flags:    flags,
+	}
+}
+
+func (c *Client) SignRawTransaction4TWithAmount(tx string,
+	inputs []RawTxInput, privKeysWIF []string,
+	hashType SigHashType) (string, bool, error) {
+
+	return c.SignRawTransaction4AsyncTWithAmount(tx, inputs, privKeysWIF,
+		hashType).ReceiveT()
+}
+
+func (c *Client) SignRawTransaction4AsyncTWithAmount(tx string,
+	inputs []RawTxInput, privKeysWIF []string,
+	hashType SigHashType) FutureSignRawTransactionResult {
+
+	txHex := tx
+
+	cmd := NewSignRawTransactionCmd(txHex, &inputs, &privKeysWIF,
+		btcjson.String(string(hashType)))
+	return c.sendCmd(cmd)
+}
+
+func init() {
+	flags := btcjson.UFWalletOnly
+	btcjson.MustRegisterCmd("signrawtransaction:a", (*SignRawTransactionCmd)(nil), flags)
 }

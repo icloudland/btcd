@@ -26,6 +26,7 @@ import (
 	"github.com/icloudland/btcdx/btcjson"
 	"github.com/icloudland/go-socks/socks"
 	"github.com/icloudland/websocket"
+	"strings"
 )
 
 var (
@@ -871,6 +872,9 @@ func (c *Client) sendCmd(cmd interface{}) chan *response {
 	if err != nil {
 		return newFutureError(err)
 	}
+
+	methods := strings.Split(method, ":")
+	method = methods[0]
 
 	// Marshal the command.
 	id := c.NextID()
