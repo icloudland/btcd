@@ -2,10 +2,10 @@ package rpcclient
 
 import (
 	"encoding/json"
-	"github.com/icloudland/btcdx/chaincfg/chainhash"
 	"github.com/icloudland/btcdx/btcjson"
-	"github.com/icloudland/btcutil"
+	"github.com/icloudland/btcdx/chaincfg/chainhash"
 	"github.com/icloudland/btcdx/tcoinjson"
+	"github.com/icloudland/btcutil"
 )
 
 func (c *Client) GetBlockVerboseAsyncT(blockHash *chainhash.Hash) FutureGetBlockVerboseResult {
@@ -438,6 +438,33 @@ func (c *Client) SignRawTransaction4AsyncTWithAmount(tx string,
 	cmd := NewSignRawTransactionCmd(txHex, &inputs, &privKeysWIF,
 		btcjson.String(string(hashType)))
 	return c.sendCmd(cmd)
+}
+
+func (r FutureGetRawTransactionResult) ReceiveT() (string, error) {
+	res, err := receiveFuture(r)
+	if err != nil {
+		return "", err
+	}
+
+	// Unmarshal result as a string.
+	var txHex string
+	err = json.Unmarshal(res, &txHex)
+	if err != nil {
+		return "", err
+	}
+
+	return txHex, nil
+}
+
+func (c *Client) GetRawTransactionTAsync(hash string) FutureGetRawTransactionResult {
+
+	cmd := btcjson.NewGetRawTransactionCmd(hash, btcjson.Int(0))
+	return c.sendCmd(cmd)
+}
+
+func (c *Client) GetRawTransactionT(hash string) (string, error) {
+
+	return c.GetRawTransactionTAsync(hash).ReceiveT()
 }
 
 func init() {
