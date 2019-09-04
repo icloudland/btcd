@@ -467,6 +467,31 @@ func (c *Client) GetRawTransactionT(hash string) (string, error) {
 	return c.GetRawTransactionTAsync(hash).ReceiveT()
 }
 
+func (r FutureSendToAddressResult) ReceiveT() (string, error) {
+	res, err := receiveFuture(r)
+	if err != nil {
+		return "", err
+	}
+
+	// Unmarshal result as a string.
+	var txHash string
+	err = json.Unmarshal(res, &txHash)
+	if err != nil {
+		return "", err
+	}
+
+	return txHash, nil
+}
+
+func (c *Client) SendToAddressTAsync(address string, amount btcutil.Amount) FutureSendToAddressResult {
+	cmd := btcjson.NewSendToAddressCmd(address, amount.ToBTC(), nil, nil)
+	return c.sendCmd(cmd)
+}
+
+func (c *Client) SendToAddressT(address string, amount btcutil.Amount) (string, error) {
+	return c.SendToAddressTAsync(address, amount).ReceiveT()
+}
+
 func init() {
 	flags := btcjson.UFWalletOnly
 	btcjson.MustRegisterCmd("signrawtransaction:a", (*SignRawTransactionCmd)(nil), flags)
