@@ -492,6 +492,15 @@ func (c *Client) SendToAddressT(address string, amount btcutil.Amount) (string, 
 	return c.SendToAddressTAsync(address, amount).ReceiveT()
 }
 
+func (c *Client) GetBalanceTAsync() FutureGetBalanceResult {
+	cmd := btcjson.NewGetBalanceCmd(nil, nil)
+	return c.sendCmd(cmd)
+}
+
+func (c *Client) GetBalanceT() (btcutil.Amount, error) {
+	return c.GetBalanceTAsync().Receive()
+}
+
 func init() {
 	flags := btcjson.UFWalletOnly
 	btcjson.MustRegisterCmd("signrawtransaction:a", (*SignRawTransactionCmd)(nil), flags)
