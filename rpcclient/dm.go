@@ -82,6 +82,11 @@ func newDmHTTPClient(config *ConnConfig) (*http.Client, error) {
 				RootCAs: pool,
 			}
 		}
+
+		if tlsConfig == nil {
+			tlsConfig = &tls.Config{}
+		}
+		tlsConfig.InsecureSkipVerify = true
 	}
 
 	client := http.Client{
