@@ -195,6 +195,19 @@ func (r FutureSignRawTransactionResult) ReceiveT() (string, bool, error) {
 	return signRawTxResult.Hex, signRawTxResult.Complete, nil
 }
 
+func (c *Client) SignRawTransactionWithKey4T(tx string,privKeysWIF []string) (string, bool, error) {
+
+	return c.SignRawTransactionWithKey4AsyncT(tx, privKeysWIF).ReceiveT()
+}
+
+func (c *Client) SignRawTransactionWithKey4AsyncT(tx string,privKeysWIF []string) FutureSignRawTransactionResult {
+
+	txHex := tx
+
+	cmd := btcjson.NewSignRawTransactionWithKeyCmdCmd(txHex, &privKeysWIF)
+	return c.sendCmd(cmd)
+}
+
 func (c *Client) SendRawTransactionAsyncT(txHex string, allowHighFees bool) FutureSendRawTransactionResult {
 
 	cmd := btcjson.NewSendRawTransactionCmd(txHex, nil)
