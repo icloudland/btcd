@@ -195,16 +195,27 @@ func (r FutureSignRawTransactionResult) ReceiveT() (string, bool, error) {
 	return signRawTxResult.Hex, signRawTxResult.Complete, nil
 }
 
-func (c *Client) SignRawTransactionWithKey4T(tx string,privKeysWIF []string) (string, bool, error) {
+func (c *Client) SignRawTransactionWithKey4T(tx string, privKeysWIF []string) (string, bool, error) {
 
 	return c.SignRawTransactionWithKey4AsyncT(tx, privKeysWIF).ReceiveT()
 }
 
-func (c *Client) SignRawTransactionWithKey4AsyncT(tx string,privKeysWIF []string) FutureSignRawTransactionResult {
+func (c *Client) SignRawTransactionWithKey4AsyncT(tx string, privKeysWIF []string) FutureSignRawTransactionResult {
 
 	txHex := tx
 
 	cmd := btcjson.NewSignRawTransactionWithKeyCmdCmd(txHex, &privKeysWIF)
+	return c.sendCmd(cmd)
+}
+
+func (c *Client) SignRawTransactionWithKeyN4T(tx string, inputs []btcjson.RawTxInput, privKeysWIF []string) (string, bool, error) {
+
+	return c.SignRawTransactionWithKeyN4AsyncT(tx, inputs, privKeysWIF).ReceiveT()
+}
+
+func (c *Client) SignRawTransactionWithKeyN4AsyncT(tx string, inputs []btcjson.RawTxInput, privKeysWIF []string) FutureSignRawTransactionResult {
+
+	cmd := btcjson.NewSignRawTransactionWithKeyNCmd(tx, &inputs, &privKeysWIF)
 	return c.sendCmd(cmd)
 }
 
@@ -514,9 +525,8 @@ func (c *Client) GetBalanceT() (btcutil.Amount, error) {
 	return c.GetBalanceTAsync().Receive()
 }
 
-
 func (c *Client) SendFromTAsync(fromAccount string, toAddress string, amount btcutil.Amount) FutureSendFromResult {
-	
+
 	cmd := btcjson.NewSendFromCmd(fromAccount, toAddress, amount.ToBTC(), nil,
 		nil, nil)
 	return c.sendCmd(cmd)
@@ -540,6 +550,40 @@ func (r FutureSendFromResult) ReceiveT() (string, error) {
 	}
 
 	return txHash, nil
+}
+
+type TxRawResultWithoutInOut struct {
+	Hex           string `json:"hex"`
+	Txid          string `json:"txid"`
+	Hash          string `json:"hash,omitempty"`
+	Size          int32  `json:"size,omitempty"`
+	Vsize         int32  `json:"vsize,omitempty"`
+	Version       int32  `json:"version"`
+	LockTime      uint32 `json:"locktime"`
+	BlockHash     string `json:"blockhash,omitempty"`
+	Confirmations uint64 `json:"confirmations,omitempty"`
+	Time          int64  `json:"time,omitempty"`
+	Blocktime     int64  `json:"blocktime,omitempty"`
+}
+
+func (r FutureGetRawTransactionVerboseResult) ReceiveN() (*TxRawResultWithoutInOut, error) {
+	res, err := receiveFuture(r)
+	if err != nil {
+		return nil, err
+	}
+
+	var rawTxResult TxRawResultWithoutInOut
+	err = json.Unmarshal(res, &rawTxResult)
+	if err != nil {
+		return nil, err
+	}
+
+	return &rawTxResult, nil
+}
+
+// for vas
+func (c *Client) GetRawTransactionVerboseN(txHash *chainhash.Hash) (*TxRawResultWithoutInOut, error) {
+	return c.GetRawTransactionVerboseAsync(txHash).ReceiveN()
 }
 
 func init() {

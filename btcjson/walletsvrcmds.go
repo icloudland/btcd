@@ -612,6 +612,20 @@ func NewSignRawTransactionWithKeyCmdCmd(hexEncodedTx string, privKeys *[]string)
 	}
 }
 
+type SignRawTransactionWithKeyNCmd struct {
+	RawTx    string
+	Inputs   *[]RawTxInput
+	PrivKeys *[]string
+}
+
+func NewSignRawTransactionWithKeyNCmd(hexEncodedTx string, inputs *[]RawTxInput, privKeys *[]string) *SignRawTransactionWithKeyNCmd {
+	return &SignRawTransactionWithKeyNCmd{
+		RawTx:    hexEncodedTx,
+		Inputs:   inputs,
+		PrivKeys: privKeys,
+	}
+}
+
 // NewSignRawTransactionCmd returns a new instance which can be used to issue a
 // signrawtransaction JSON-RPC command.
 //
@@ -706,6 +720,7 @@ func init() {
 	MustRegisterCmd("signmessage", (*SignMessageCmd)(nil), flags)
 	MustRegisterCmd("signrawtransaction", (*SignRawTransactionCmd)(nil), flags)
 	MustRegisterCmd("signrawtransactionwithkey", (*SignRawTransactionWithKeyCmd)(nil), flags)
+	MustRegisterCmd("signrawtransactionwithkey:a", (*SignRawTransactionWithKeyNCmd)(nil), flags)
 	MustRegisterCmd("walletlock", (*WalletLockCmd)(nil), flags)
 	MustRegisterCmd("walletpassphrase", (*WalletPassphraseCmd)(nil), flags)
 	MustRegisterCmd("walletpassphrasechange", (*WalletPassphraseChangeCmd)(nil), flags)
