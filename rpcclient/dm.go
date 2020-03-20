@@ -499,6 +499,21 @@ func (r FutureGetTransactionDetail) Receive() (*dmjson.DmGetTransactionDetailRes
 	return &tRes, nil
 }
 
+func (r FutureGetTransactionDetail) ReceiveNew() ([]*dmjson.DmGetTransactionDetailResult, error) {
+	res, err := receiveDmFuture(r)
+	if err != nil {
+		return nil, err
+	}
+
+	var tRes []*dmjson.DmGetTransactionDetailResult
+	err = json.Unmarshal(res, &tRes)
+	if err != nil {
+		return nil, err
+	}
+
+	return tRes, nil
+}
+
 func (c *DmClient) DmGetTransactionDetailAsync(tx string) FutureGetTransactionDetail {
 
 	cmd := dmjson.NewDmGetTransactionDetailCmd(tx)
@@ -507,6 +522,10 @@ func (c *DmClient) DmGetTransactionDetailAsync(tx string) FutureGetTransactionDe
 
 func (c *DmClient) DmGetTransactionDetail(tx string) (*dmjson.DmGetTransactionDetailResult, error) {
 	return c.DmGetTransactionDetailAsync(tx).Receive()
+}
+
+func (c *DmClient) DmGetTransactionDetailNew(tx string) ([]*dmjson.DmGetTransactionDetailResult, error) {
+	return c.DmGetTransactionDetailAsync(tx).ReceiveNew()
 }
 
 type FutureDmGetNewAddress chan *dmResponse
