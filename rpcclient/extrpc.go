@@ -491,6 +491,17 @@ func (c *Client) GetRawTransactionT(hash string) (string, error) {
 	return c.GetRawTransactionTAsync(hash).ReceiveT()
 }
 
+func (c *Client) GetTransactionTAsync(hash string) FutureGetTransactionResult {
+
+	cmd := btcjson.NewGetTransactionCmd(hash, nil)
+	return c.sendCmd(cmd)
+}
+
+func (c *Client) GetTransactionT(hash string) (*btcjson.GetTransactionResult, error) {
+
+	return c.GetTransactionTAsync(hash).Receive()
+}
+
 func (r FutureSendToAddressResult) ReceiveT() (string, error) {
 	res, err := receiveFuture(r)
 	if err != nil {
