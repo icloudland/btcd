@@ -154,6 +154,36 @@ func (r FutureCreateRawTransactionResult) ReceiveT() (string, error) {
 	return txHex, nil
 }
 
+type TokenAmount struct {
+	Amount      float64
+	TokenAmount float64
+	TokenId     string
+}
+
+type CreateTokenRawTransactionCmd struct {
+	Inputs   []btcjson.TransactionInput
+	Amounts  map[string]TokenAmount
+	LockTime *int64
+}
+
+// CreateRawTransaction returns a new transaction spending the provided inputs
+// and sending to the provided addresses.
+func (c *Client) CreateTokenRawTransactionT(inputs []btcjson.TransactionInput,
+	amounts map[string]TokenAmount, lockTime *int64) (string, error) {
+
+	return c.CreateTokenRawTransactionAsyncT(inputs, amounts).ReceiveT()
+}
+
+func (c *Client) CreateTokenRawTransactionAsyncT(inputs []btcjson.TransactionInput,
+	amounts map[string]TokenAmount) FutureCreateRawTransactionResult {
+
+	cmd := CreateTokenRawTransactionCmd{
+		Inputs:  inputs,
+		Amounts: amounts,
+	}
+	return c.sendCmd(cmd)
+}
+
 //func init() {
 //	btcjson.UnRegisterCmd("createrawtransaction")
 //	btcjson.MustRegisterCmd("createrawtransaction", (*CreateRawTransactionCmd)(nil), btcjson.UsageFlag(0))
@@ -600,4 +630,5 @@ func (c *Client) GetRawTransactionVerboseN(txHash *chainhash.Hash) (*TxRawResult
 func init() {
 	flags := btcjson.UFWalletOnly
 	btcjson.MustRegisterCmd("signrawtransaction:a", (*SignRawTransactionCmd)(nil), flags)
+	btcjson.MustRegisterCmd("createrawtransaction", (*CreateTokenRawTransactionCmd)(nil), flags)
 }
