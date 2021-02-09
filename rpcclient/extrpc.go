@@ -155,9 +155,9 @@ func (r FutureCreateRawTransactionResult) ReceiveT() (string, error) {
 }
 
 type TokenAmount struct {
-	Amount      float64
-	TokenAmount float64
-	TokenId     string
+	Amount      float64 `json:"amount"`
+	TokenAmount float64	`json:"tokenamount"`
+	TokenId     string `json:"tokenid"`
 }
 
 type CreateTokenRawTransactionCmd struct {
@@ -181,7 +181,7 @@ func (c *Client) CreateTokenRawTransactionAsyncT(inputs []btcjson.TransactionInp
 		Inputs:  inputs,
 		Amounts: amounts,
 	}
-	return c.sendCmd(cmd)
+	return c.sendCmd(&cmd)
 }
 
 //func init() {
@@ -630,5 +630,5 @@ func (c *Client) GetRawTransactionVerboseN(txHash *chainhash.Hash) (*TxRawResult
 func init() {
 	flags := btcjson.UFWalletOnly
 	btcjson.MustRegisterCmd("signrawtransaction:a", (*SignRawTransactionCmd)(nil), flags)
-	btcjson.MustRegisterCmd("createrawtransaction", (*CreateTokenRawTransactionCmd)(nil), flags)
+	btcjson.MustRegisterCmd("createtokenrawtransaction", (*CreateTokenRawTransactionCmd)(nil), flags)
 }
